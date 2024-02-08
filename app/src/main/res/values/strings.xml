@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">GEKATA_mobile</string>
+    <string name="loading">Hmm.. loading</string>
+    <string name="error">Error</string>
+    <string name="success">GC</string>
+    <string name="retry">Try again</string>
+</resources>
