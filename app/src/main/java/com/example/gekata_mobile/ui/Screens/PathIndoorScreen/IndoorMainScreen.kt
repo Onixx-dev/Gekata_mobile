@@ -54,10 +54,7 @@ fun IndoorMainScreen(
     }
 }
 
-@Composable
-fun DrawLevel() {
 
-}
 
 @Composable
 fun LevelSelector(modifier: Modifier, projectsViewModel: ProjectsViewModel) {
