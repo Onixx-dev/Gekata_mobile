@@ -7,6 +7,6 @@ data class Project(
 
   @JsonProperty("pname" ) var pname : String?         = null,
   @JsonProperty("ppath" ) var ppath : String?         = null,
-  @JsonProperty("bldg"  ) var building  : Building? = null
+  @JsonProperty("bldg"  ) var building  : List<Building>? = null
 
 )

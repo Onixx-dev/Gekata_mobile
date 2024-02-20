@@ -8,6 +8,6 @@ data class CurveWall(
     @JsonProperty("spy" ) var startY : Int? = null,
     @JsonProperty("epx" ) var endX : Int? = null,
     @JsonProperty("epy" ) var endY : Int? = null,
-    @JsonProperty("epx" ) var controlX : Int? = null,
-    @JsonProperty("epy" ) var controlY : Int? = null
+    @JsonProperty("cpx" ) var controlX : Int? = null,
+    @JsonProperty("cpy" ) var controlY : Int? = null
 )

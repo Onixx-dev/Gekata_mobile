@@ -15,7 +15,7 @@ interface ProjectsAPIServise {
     suspend fun getBuildingsList(
     ): ArrayList<TransportBuilding>
 
-    @GET("BuildingController/getBuilding")
+    @GET("BuildingController/getBuildingModel")
     suspend fun getProjectById(
         @Query("id") id: Int
     ): Project
