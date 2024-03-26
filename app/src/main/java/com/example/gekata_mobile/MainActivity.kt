@@ -18,9 +18,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.gekata_mobile.ModelView.Realisation.ProjectsViewModel
 import com.example.gekata_mobile.ui.Screens.Navigation.BottomBarItems
 import com.example.gekata_mobile.ui.Screens.Navigation.SetupNavGraph
 import com.example.gekata_mobile.ui.theme.GEKATA_mobileTheme
@@ -35,13 +37,14 @@ class MainActivity : ComponentActivity() {
             GEKATA_mobileTheme {
 
                 navController = rememberNavController()
+                val projectsViewModel: ProjectsViewModel = viewModel(factory = ProjectsViewModel.Factory)
 
                 Scaffold(
                     topBar = { TopBar() },
                     bottomBar = { BottomNavigationBar(navController) },
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
-                        SetupNavGraph(navController = navController)
+                        SetupNavGraph(navController = navController, projectsViewModel = projectsViewModel)
                     }
                 }
             }

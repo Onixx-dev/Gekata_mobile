@@ -30,8 +30,9 @@ import com.example.gekata_mobile.ui.Screens.Navigation.BottomBarItems
 @Composable
 fun ProjectsApp(
     modifier: Modifier = Modifier,
+    projectsViewModel: ProjectsViewModel
 ) {
-    val projectsViewModel: ProjectsViewModel = viewModel(factory = ProjectsViewModel.Factory)
+//    val projectsViewModel: ProjectsViewModel = viewModel(factory = ProjectsViewModel.Factory)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),

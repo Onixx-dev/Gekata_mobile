@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -27,7 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gekata_mobile.ModelView.Interfaces.ProjectsUIStates
 import com.example.gekata_mobile.ModelView.Realisation.ProjectsViewModel
@@ -37,9 +41,7 @@ import com.example.gekata_mobile.Models.Basic.WayPoint
 import com.example.gekata_mobile.Network.TransportModels.TransportBuilding
 
 @Composable
-fun PointsMainScreen(modifier: Modifier = Modifier) {
-
-    val projectsViewModel: ProjectsViewModel = viewModel(factory = ProjectsViewModel.Factory)
+fun PointsMainScreen(modifier: Modifier = Modifier, projectsViewModel: ProjectsViewModel) {
 
     Scaffold(
         modifier = modifier.fillMaxSize()
@@ -53,8 +55,16 @@ fun PointsMainScreen(modifier: Modifier = Modifier) {
 
             test(
                 projectsUIStates = projectsViewModel.projectsUIStates,
-                modifier = modifier
+                modifier = modifier,
+                projectsViewModel = projectsViewModel
             )
+//            Button(
+//                onClick = { projectsViewModel.getLevelsWay() },
+//                Modifier.offset(x = Dp(0f), y = Dp(500f)),
+//            ) {
+//
+//                Text("Click", fontSize = 25.sp)
+//            }
         }
     }
 }
@@ -63,9 +73,10 @@ fun PointsMainScreen(modifier: Modifier = Modifier) {
 @Composable
 fun test(
     projectsUIStates: ProjectsUIStates,
-    modifier: Modifier
+    modifier: Modifier,
+    projectsViewModel: ProjectsViewModel
 ) {
-    val projectsViewModel: ProjectsViewModel = viewModel(factory = ProjectsViewModel.Factory)
+//    val projectsViewModel: ProjectsViewModel = viewModel(factory = ProjectsViewModel.Factory)
 
     Column(
         modifier.fillMaxSize(),
@@ -82,7 +93,9 @@ fun test(
                 if (projectsViewModel.startBuilding != null)
                     ExposedPointsDropdown(
                         project = projectsViewModel.startBuilding!!,
-                        onSelectedAction = { item: InterestPoint -> projectsViewModel.startPoint = item }
+                        onSelectedAction = { item: InterestPoint ->
+                            projectsViewModel.startPoint = item
+                        }
                     )
                 else {
                     Text(text = "building not selected")
@@ -95,19 +108,16 @@ fun test(
                 if (projectsViewModel.endBuilding != null)
                     ExposedPointsDropdown(
                         project = projectsViewModel.endBuilding!!,
-                        onSelectedAction = {item: InterestPoint -> projectsViewModel.endPoint = item}
+                        onSelectedAction = { item: InterestPoint ->
+                            projectsViewModel.endPoint = item
+                        }
                     )
                 else {
                     Text(text = "building not selected")
                 }
 
-                Button(onClick = {
-                    Log.d("result1", projectsViewModel.startBuilding.toString())
-                    Log.d("result2", projectsViewModel.startPoint.toString())
-                    Log.d("result3", projectsViewModel.endBuilding.toString())
-                    Log.d("result4", projectsViewModel.endPoint.toString())
-                }) {
-
+                Button(onClick = { projectsViewModel.getLevelsWay()}) {
+                    Text(text = "Accept")
                 }
 
             }
@@ -116,8 +126,8 @@ fun test(
                 Text(text = "error")
                 Button(
                     onClick = {
-                    projectsViewModel.getProjectsList()
-                }){
+                        projectsViewModel.getProjectsList()
+                    }) {
                     Text(text = "try again")
                 }
             }

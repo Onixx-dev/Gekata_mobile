@@ -1,6 +1,7 @@
 package com.example.gekata_mobile.ui.Screens.Navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.LocationOn
@@ -17,7 +18,7 @@ sealed class BottomBarItems(
     object ProjectListItem : BottomBarItems(
         route = Screen.Projects.route,
         label = "projects",
-        icon = Icons.Default.List
+        icon = Icons.AutoMirrored.Filled.List
     )
 
     object PointsListItem : BottomBarItems(
