@@ -13,16 +13,23 @@ import com.example.gekata_mobile.ModelView.Interfaces.IndoorUIStates
 
 import com.example.gekata_mobile.ModelView.Interfaces.ProjectsUIStates
 import com.example.gekata_mobile.ModelView.Realisation.PathFinding.GraphPathFinder
+import com.example.gekata_mobile.ModelView.Realisation.PathFinding.LevelPathFinder
 import com.example.gekata_mobile.ModelView.Realisation.PathFinding.PathContainer
 import com.example.gekata_mobile.Models.Basic.Building
 import com.example.gekata_mobile.Models.Basic.InterestPoint
 import com.example.gekata_mobile.Models.Basic.Project
 import com.example.gekata_mobile.Models.Basic.WayPoint
 import com.example.gekata_mobile.Network.Repository.Realisation.ProjectsRepository
+import com.example.gekata_mobile.Network.TransportModels.TransportBuilding
 import com.example.gekata_mobile.TestApplication
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.io.IOException
+import java.time.ZonedDateTime
 
 class ProjectsViewModel(
     private val projectsRepository: ProjectsRepository
@@ -32,9 +39,6 @@ class ProjectsViewModel(
     /////////////////////////////////////
     ////////STATES
     var projectsUIStates: ProjectsUIStates by mutableStateOf(ProjectsUIStates.Loading)
-        private set
-    var indoorUIStates: IndoorUIStates by mutableStateOf(IndoorUIStates.Loading)
-        private set
 
 
     /////////////////////////////////////
@@ -67,6 +71,9 @@ class ProjectsViewModel(
 
     /////////////////////////////////////
     ////////Level Selector
+
+    var buildingsList: ArrayList<TransportBuilding> = arrayListOf()
+
     var levelIndex: Int by mutableIntStateOf(0)
 
     var buildingIndex: Int = 0
@@ -87,13 +94,14 @@ class ProjectsViewModel(
     }
 
     fun getLevelsWay() {
-        viewModelScope.launch {
-            indoorUIStates = IndoorUIStates.Loading
-            indoorUIStates =
+
+//            projectsUIStates = ProjectsUIStates.Loading
+            projectsUIStates =
                 try {
+                    levelIndex = 0
                     if (startBuilding!!.building!!.first().id!! == endBuilding!!.building!!.first().id!!) {
                         Log.d("puk", "puk")
-                        IndoorUIStates.Error("puk-puk")
+                        ProjectsUIStates.Error
                         //TODO start & end building are equals
                     } else {
                             startWaypoint = WayPoint()
@@ -101,27 +109,32 @@ class ProjectsViewModel(
                             endWaypoint = WayPoint()
                             endWaypoint.isEmpty = true
                         val graphPathFinder = GraphPathFinder(startPoint!!,endPoint!!,startWaypoint,endWaypoint)
-                        IndoorUIStates.Success(
+
+                        ProjectsUIStates.PathComplete(
                             PathContainer(
                                 startBuildingPoints = graphPathFinder.pathIndoor(
                                     startBuilding!!.building!![0],
-                                    isPathToExit = true
+                                    isPathToExit = true,
                                 ),
                                 endBuildingPoints = graphPathFinder.pathIndoor(
                                     endBuilding!!.building!![0],
                                     isPathToExit = false
-                                )
+                                ),
+                                startPoint!!,
+                                endPoint!!
                             )
                         )
                     }
                 } catch (e: IOException) {
-                    IndoorUIStates.Error("unexpected error: check the entered data for correctness")
+                    ProjectsUIStates.Error
                 }
-        }
+
     }
 
 
-
+    suspend fun awaitMilliseconds(x: Long) {
+        projectsUIStates = ProjectsUIStates.BuildingPath(operation = {getLevelsWay()})
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,7 +146,8 @@ class ProjectsViewModel(
             projectsUIStates = ProjectsUIStates.Loading
             projectsUIStates =
                 try {
-                    ProjectsUIStates.Success(projectsRepository.getBuildingsList())
+                    buildingsList = projectsRepository.getBuildingsList()
+                    ProjectsUIStates.Success(buildingsList)
                 } catch (e: IOException) {
                     Log.d("api error", "IO = " + e.message)
                     ProjectsUIStates.Error

@@ -39,10 +39,10 @@ import com.example.gekata_mobile.Models.Basic.InterestPoint
 import com.example.gekata_mobile.Models.Basic.Project
 import com.example.gekata_mobile.Models.Basic.WayPoint
 import com.example.gekata_mobile.Network.TransportModels.TransportBuilding
+import java.time.ZonedDateTime
 
 @Composable
 fun PointsMainScreen(modifier: Modifier = Modifier, projectsViewModel: ProjectsViewModel) {
-
     Scaffold(
         modifier = modifier.fillMaxSize()
     ) {
@@ -52,200 +52,19 @@ fun PointsMainScreen(modifier: Modifier = Modifier, projectsViewModel: ProjectsV
                 .padding(it),
             color = MaterialTheme.colorScheme.background
         ) {
-
-            test(
-                projectsUIStates = projectsViewModel.projectsUIStates,
-                modifier = modifier,
-                projectsViewModel = projectsViewModel
-            )
-//            Button(
-//                onClick = { projectsViewModel.getLevelsWay() },
-//                Modifier.offset(x = Dp(0f), y = Dp(500f)),
-//            ) {
-//
-//                Text("Click", fontSize = 25.sp)
-//            }
-        }
-    }
-}
-
-
-@Composable
-fun test(
-    projectsUIStates: ProjectsUIStates,
-    modifier: Modifier,
-    projectsViewModel: ProjectsViewModel
-) {
-//    val projectsViewModel: ProjectsViewModel = viewModel(factory = ProjectsViewModel.Factory)
-
-    Column(
-        modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        when (projectsUIStates) {
-            is ProjectsUIStates.Success -> {
-
-                ExposedBuildingsDropdown(
-                    resultSearch = projectsUIStates.resultSearch,
-                    onSelectedAction = { id: Int -> projectsViewModel.getProjectByIdAsStartPoint(id) }
-                )
-                if (projectsViewModel.startBuilding != null)
-                    ExposedPointsDropdown(
-                        project = projectsViewModel.startBuilding!!,
-                        onSelectedAction = { item: InterestPoint ->
-                            projectsViewModel.startPoint = item
-                        }
-                    )
-                else {
-                    Text(text = "building not selected")
-                }
-
-                ExposedBuildingsDropdown(
-                    resultSearch = projectsUIStates.resultSearch,
-                    onSelectedAction = { id: Int -> projectsViewModel.getProjectByIdAsEndPoint(id) }
-                )
-                if (projectsViewModel.endBuilding != null)
-                    ExposedPointsDropdown(
-                        project = projectsViewModel.endBuilding!!,
-                        onSelectedAction = { item: InterestPoint ->
-                            projectsViewModel.endPoint = item
-                        }
-                    )
-                else {
-                    Text(text = "building not selected")
-                }
-
-                Button(onClick = { projectsViewModel.getLevelsWay()}) {
-                    Text(text = "Accept")
-                }
-
-            }
-
-            is ProjectsUIStates.Error -> {
-                Text(text = "error")
-                Button(
-                    onClick = {
-                        projectsViewModel.getProjectsList()
-                    }) {
-                    Text(text = "try again")
-                }
-            }
-
-            is ProjectsUIStates.Loading -> {
-                Text(text = "loading")
-            }
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExposedBuildingsDropdown(
-    resultSearch: ArrayList<TransportBuilding>,
-    onSelectedAction: (Int) -> Unit,
-) {
-    val names: ArrayList<String> = arrayListOf()
-    for (item in resultSearch) {
-        item.name?.let { names.add(it) }
-    }
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("") }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-    )
-    {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-            TextField(
-                value = selectedText,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
-            )
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+            Column(
+                modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                resultSearch.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(text = item.name!!) },
-                        onClick = {
-                            onSelectedAction(item.id!!)
-                            selectedText = item.name!!
-                            expanded = false
-                        }
-                    )
-                }
+//                PointsSelectionScreen(modifier = modifier,projectsViewModel = projectsViewModel,result = projectsUIStates.resultSearch)
             }
         }
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExposedPointsDropdown(project: Project, onSelectedAction: (InterestPoint) -> Unit) {
 
-    var names: ArrayList<String> = arrayListOf()
-    val points: ArrayList<InterestPoint> = arrayListOf()
-
-    for (level in project.building!![0].levels) {
-        for (item in level.interestPoints) {
-            item.name?.let { names.add(it) }
-            points.add(item)
-        }
-    }
-
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf("") }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-    )
-    {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-            TextField(
-                value = selectedText!!,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
-            )
-
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                points.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(text = item.name!!) },
-                        onClick = {
-                            onSelectedAction(item)
-                            selectedText = item.name!!
-                            expanded = false
-                        }
-                    )
-                }
-            }
-        }
-    }
-}
 
 
 

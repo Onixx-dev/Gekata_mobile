@@ -11,12 +11,15 @@ import com.example.gekata_mobile.ui.Screens.ProjectsListScreen.LoadingScreen
 @Composable
 fun IndoorHomeScreen(
     projectsViewModel: ProjectsViewModel,
-    indoorUIStates: IndoorUIStates,
+    projectsUIStates: ProjectsUIStates,
     modifier: Modifier = Modifier
 ) {
-    when (indoorUIStates) {
-        is IndoorUIStates.Loading -> LoadingScreen(modifier)
-        is IndoorUIStates.Success -> IndoorMainScreen(projectsViewModel = projectsViewModel, pathContainer = indoorUIStates.pathContainer)
-        is IndoorUIStates.Error -> ErrorScreen({}, modifier)
+    when (projectsUIStates) {
+        is ProjectsUIStates.Loading -> LoadingScreen(modifier)
+        is ProjectsUIStates.Error -> ErrorScreen({}, modifier)
+        is ProjectsUIStates.BuildingPath -> LoadingScreen(modifier)
+        is ProjectsUIStates.PathComplete -> IndoorMainScreen(projectsViewModel = projectsViewModel, pathContainer = projectsUIStates.pathContainer)
+        is ProjectsUIStates.Success -> LoadingScreen(modifier)
+
     }
 }

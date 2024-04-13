@@ -1,6 +1,6 @@
 package com.example.gekata_mobile.Models.Basic
 
-import android.util.Log
+import com.example.gekata_mobile.Models.Interfaces.IDataPoint
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 
@@ -15,7 +15,7 @@ data class WayPoint(
     @JsonProperty("out") var isOutdoorConnected: Boolean? = null,
     @JsonProperty("lvl") var hostLevel: Int? = null,
     @JsonProperty("fnsh") var finishWayPointsID: ArrayList<Int> = arrayListOf()
-) {
+) :IDataPoint {
 
     @JsonIgnore
     var connectedPoints: ArrayList<WayPoint> = arrayListOf()
@@ -98,4 +98,20 @@ data class WayPoint(
         return str
     }
 
+    override fun getX(): Int {
+        return x!!
+    }
+
+    override fun getY(): Int {
+        return y!!
+    }
+
+    override fun _getID(): Int {
+        return id!!
+    }
+
+    override fun normalizeBy(changeAtX: Int, changeAtY: Int) {
+        x = x?.minus(changeAtX)
+        y = y?.minus(changeAtY)
+    }
 }

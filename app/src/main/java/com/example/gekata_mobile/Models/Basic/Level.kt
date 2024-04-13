@@ -1,6 +1,8 @@
 package com.example.gekata_mobile.Models.Basic
 
+import android.telecom.CallEndpoint
 import com.example.gekata_mobile.ModelView.Realisation.PathFinding.TreeNode
+import com.example.gekata_mobile.Models.Interfaces.IDataPoint
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 
@@ -20,11 +22,24 @@ data class Level (
   @JsonIgnore
   var isNormalize: Boolean = false
   @JsonIgnore
+  var isContainsPath: Boolean = false
+
+  @JsonIgnore
   var maxX: Int = Int.MIN_VALUE
   @JsonIgnore
   var maxY: Int = Int.MIN_VALUE
+
+
+  lateinit var startPoint: IDataPoint
+  lateinit var endpoint: IDataPoint
+
   @JsonIgnore
   lateinit var pathTreeRoot: TreeNode
+  @JsonIgnore
+  lateinit var finalPath: TreeNode
+  @JsonIgnore
+  var test: TreeNode = TreeNode(0, 0)
+  
 
 
   fun isContainsInterestPoint(id: Int, name: String?): Boolean {
@@ -35,5 +50,7 @@ data class Level (
   }
 
   fun isTreeNodeInitialised() = ::pathTreeRoot.isInitialized
+
+  fun isFinalPathInitialised() = ::finalPath.isInitialized
 
 }

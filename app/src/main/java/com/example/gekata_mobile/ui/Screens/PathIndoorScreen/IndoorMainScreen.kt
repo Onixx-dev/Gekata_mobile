@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -136,7 +137,7 @@ fun LevelCanvas(
             scale(scale.floatValue * zoomMagnitude, scale.floatValue * zoomMagnitude)
         }) {
 
-            pathContainer.getItem(projectsViewModel.levelIndex).hostLevelObject.walls.forEach {
+            pathContainer.getItem(projectsViewModel.levelIndex).walls.forEach {
                 drawLine(
                     start = Offset(x = it.startX!!.toFloat(), y = it.startY!!.toFloat()),
                     end = Offset(x = it.endX!!.toFloat(), y = it.endY!!.toFloat()),
@@ -145,29 +146,65 @@ fun LevelCanvas(
                 )
             }
 
+            /////// TREE DRAW
             val stack = ArrayDeque<TreeNode>()
             var treeItem: TreeNode
-
-            if (!pathContainer.getItem(projectsViewModel.levelIndex).hostLevelObject.isTreeNodeInitialised())
-                pathContainer.getItem(projectsViewModel.levelIndex).hostLevelObject.pathTreeRoot =
-                    TreeNode(100, 100)
-
-            stack.push(pathContainer.getItem(projectsViewModel.levelIndex).hostLevelObject.pathTreeRoot)
+            if (!pathContainer.getItem(projectsViewModel.levelIndex).isTreeNodeInitialised())
+                pathContainer.getItem(projectsViewModel.levelIndex).pathTreeRoot = TreeNode(100, 100)
+            stack.push(pathContainer.getItem(projectsViewModel.levelIndex).pathTreeRoot)
             do {
                 treeItem = stack.pop()
                 for (way in treeItem.childs)
                     drawLine(
                         start = Offset(x = treeItem.x.toFloat(), y = treeItem.y.toFloat()),
                         end = Offset(x = way.x.toFloat(), y = way.y.toFloat()),
-                        strokeWidth = 4f,
+                        strokeWidth = 3f,
                         color = Color.Red
                     )
-
                 for (child in treeItem.childs)
                     stack.push(child)
             } while (!stack.isEmpty())
 
-            pathContainer.getItem(projectsViewModel.levelIndex).hostLevelObject.wayPoints.forEach {
+            ////////////////////////// FINAL PATH DRAW
+
+            if (pathContainer.getItem(projectsViewModel.levelIndex).isFinalPathInitialised()) {
+                stack.clear()
+                stack.push(pathContainer.getItem(projectsViewModel.levelIndex).finalPath)
+                do {
+                    treeItem = stack.pop()
+                    for (way in treeItem.childs)
+                        drawLine(
+                            start = Offset(x = treeItem.x.toFloat(), y = treeItem.y.toFloat()),
+                            end = Offset(x = way.x.toFloat(), y = way.y.toFloat()),
+                            strokeWidth = 9f,
+                            color = Color.Green
+                        )
+                    for (child in treeItem.childs)
+                        stack.push(child)
+                } while (!stack.isEmpty())
+            }
+
+            ////////////////////////// FINAL PATH DRAW
+
+            if (pathContainer.getItem(projectsViewModel.levelIndex).isFinalPathInitialised()) {
+                stack.clear()
+                stack.push(pathContainer.getItem(projectsViewModel.levelIndex).test)
+                do {
+                    treeItem = stack.pop()
+                    for (way in treeItem.childs)
+                        drawLine(
+                            start = Offset(x = treeItem.x.toFloat(), y = treeItem.y.toFloat()),
+                            end = Offset(x = way.x.toFloat(), y = way.y.toFloat()),
+                            strokeWidth = 4f,
+                            color = Color.Red
+                        )
+                    for (child in treeItem.childs)
+                        stack.push(child)
+                } while (!stack.isEmpty())
+            }
+
+
+            pathContainer.getItem(projectsViewModel.levelIndex).wayPoints.forEach {
                 drawCircle(
                     center = Offset(x = it.x!!.toFloat(), y = it.y!!.toFloat()),
                     radius = 25f,
@@ -180,7 +217,7 @@ fun LevelCanvas(
                 )
             }
 
-            pathContainer.getItem(projectsViewModel.levelIndex).hostLevelObject.interestPoints.forEach {
+            pathContainer.getItem(projectsViewModel.levelIndex).interestPoints.forEach {
                 drawCircle(
                     center = Offset(x = it.x!!.toFloat(), y = it.y!!.toFloat()),
                     radius = 25f,
@@ -192,6 +229,23 @@ fun LevelCanvas(
                     color = Color.Green
                 )
             }
+
+
+
+                drawCircle(
+                    center = Offset(
+                        x = pathContainer.getItem(projectsViewModel.levelIndex).startPoint.getX().toFloat(),
+                        y = pathContainer.getItem(projectsViewModel.levelIndex).startPoint.getY().toFloat()),
+                    radius = 14f,
+                    color = Color.Magenta
+                )
+            drawCircle(
+                center = Offset(
+                    x = pathContainer.getItem(projectsViewModel.levelIndex).endpoint.getX().toFloat(),
+                    y = pathContainer.getItem(projectsViewModel.levelIndex).endpoint.getY().toFloat()),
+                radius = 14f,
+                color = Color.Blue
+            )
 
 
         }
@@ -206,29 +260,12 @@ fun LevelSelector(
     projectsViewModel: ProjectsViewModel,
     pathContainer: PathContainer
 ) {
-    var count: Int by remember { mutableIntStateOf(0) }
-
     Row(
         modifier = modifier
             .fillMaxHeight(1.0f)
             .fillMaxWidth()
-//        .background(Color.Green)
     )
     {
-        Button(onClick = {
-            val levelPathFinder = LevelPathFinder()
-            levelPathFinder.run(
-                pathContainer.getItem(projectsViewModel.levelIndex).hostLevelObject,
-                100,
-                100,
-                550,
-                550
-            )
-            count++
-        }) {
-            Text(text = "t $count")
-        }
-
         OutlinedTextField(
             value = pathContainer.getItem(projectsViewModel.levelIndex).name!!,
             onValueChange = {},
@@ -243,8 +280,6 @@ fun LevelSelector(
                 .weight(14f)
                 .fillMaxHeight()
         )
-
-
         Button(
             onClick = {
                 if (projectsViewModel.levelIndex > 0) {

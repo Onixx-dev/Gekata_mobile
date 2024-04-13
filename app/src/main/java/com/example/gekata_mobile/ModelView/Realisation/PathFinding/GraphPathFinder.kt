@@ -25,9 +25,11 @@ class GraphPathFinder() {
         val points = initModel(building)
         setWeights(points, isPathToExit = isPathToExit, end = this.endWaypoint)
         val temp = createPath(points, isPathToExit = isPathToExit)
-        Log.d("way point build", building!!.name!!)
-        for (item in temp)
-            Log.d("way point path", item.name!!)
+
+//        Log.d("way point build", building!!.name!!)
+//        for (item in temp)
+//            Log.d("way point path", item.name!!)
+
         return temp
     }
 
@@ -108,8 +110,15 @@ class GraphPathFinder() {
         var exitWayPointId: Int = 0
         val path: ArrayList<WayPoint> = arrayListOf()
 
-        if (isPathToExit)
+        if (isPathToExit){
             currentIndex = startWaypoint.id!!
+            path.add(points[currentIndex]!!)
+            for (point in points){
+                if (point.value.isOutdoorConnected!!)
+                    if (point.value.hostLevel == points[currentIndex]!!.hostLevel)
+                        return path
+            }
+        }
         else {
             for (point in points)
                 if (point.value.isOutdoorConnected!!)
@@ -117,6 +126,7 @@ class GraphPathFinder() {
             currentIndex = exitWayPointId
         }
 
+        path.clear()
         path.add(points[currentIndex]!!)
         if (points[currentIndex]!!.hostLevel != endWaypoint.hostLevel)// && !isPathToExit)
             do {
