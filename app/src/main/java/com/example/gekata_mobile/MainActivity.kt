@@ -1,6 +1,7 @@
 package com.example.gekata_mobile
 
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,6 +27,8 @@ import com.example.gekata_mobile.ModelView.Realisation.ProjectsViewModel
 import com.example.gekata_mobile.ui.Screens.Navigation.BottomBarItems
 import com.example.gekata_mobile.ui.Screens.Navigation.SetupNavGraph
 import com.example.gekata_mobile.ui.theme.GEKATA_mobileTheme
+import com.yandex.mapkit.MapKitFactory
+import com.yandex.mapkit.mapview.MapView
 
 class MainActivity : ComponentActivity() {
 
@@ -33,69 +36,82 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             GEKATA_mobileTheme {
 
                 navController = rememberNavController()
-                val projectsViewModel: ProjectsViewModel = viewModel(factory = ProjectsViewModel.Factory)
+                val projectsViewModel: ProjectsViewModel =
+                    viewModel(factory = ProjectsViewModel.Factory)
 
                 Scaffold(
                     topBar = { TopBar() },
                     bottomBar = { BottomNavigationBar(navController) },
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
-                        SetupNavGraph(navController = navController, projectsViewModel = projectsViewModel)
+                        SetupNavGraph(
+                            navController = navController,
+                            projectsViewModel = projectsViewModel
+                        )
                     }
                 }
             }
         }
     }
+
+fun intentTest(){
+    val intent = Intent(this@MainActivity, MapKitActivity::class.java)
+    startActivity(intent)
 }
 
-@Composable
-fun BottomNavigationBar(navController: NavHostController) {
-    val items = listOf(
-        BottomBarItems.OutdoorListItem,
-        BottomBarItems.IndoorListItem,
-        BottomBarItems.PointsListItem,
-        BottomBarItems.ProjectListItem
-    )
-    NavigationBar(
-        contentColor = Color.White
-    ) {
+//COMPOSABLE
+///////////////////////////////////////////////////////////////////////////////////////
 
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.label) },
-                label = { Text(text = item.label) },
-                alwaysShowLabel = true,
-                selected = currentRoute == item.route,
-                onClick = {
-                    navController.navigate(item.route) {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
+    @Composable
+    fun BottomNavigationBar(navController: NavHostController) {
+        val items = listOf(
+            BottomBarItems.OutdoorListItem,
+            BottomBarItems.IndoorListItem,
+            BottomBarItems.PointsListItem,
+            BottomBarItems.ProjectListItem
+        )
+        NavigationBar(
+            contentColor = Color.White
+        ) {
+
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            items.forEach { item ->
+                NavigationBarItem(
+                    icon = { Icon(item.icon, contentDescription = item.label) },
+                    label = { Text(text = item.label) },
+                    alwaysShowLabel = true,
+                    selected = currentRoute == item.route,
+                    onClick = {
+                        navController.navigate(item.route) {
+                            navController.graph.startDestinationRoute?.let { route ->
+                                popUpTo(route) {
+                                    saveState = true
+                                }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                }
-            )
+                )
+            }
         }
     }
-}
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TopBar() {
-    TopAppBar(
-        title = {
-            Text(text = stringResource(id = R.string.app_name))
-        }
-    )
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun TopBar() {
+        TopAppBar(
+            title = {
+                Text(text = stringResource(id = R.string.app_name))
+            }
+        )
+    }
 }
 

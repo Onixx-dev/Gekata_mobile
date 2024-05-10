@@ -14,7 +14,7 @@ fun PointsHomeScreen(
     modifier: Modifier = Modifier
 ) {
     when (projectsUIStates) {
-        is ProjectsUIStates.Loading -> LoadingScreen(modifier)
+        is ProjectsUIStates.Loading -> LoadingScreen(modifier, "Loading")
         is ProjectsUIStates.Error -> ErrorScreen({projectsViewModel.getProjectsList()}, modifier)
 
         is ProjectsUIStates.Success -> PointsSelectionScreen(projectsViewModel = projectsViewModel,result = projectsUIStates.resultSearch, modifier = modifier)

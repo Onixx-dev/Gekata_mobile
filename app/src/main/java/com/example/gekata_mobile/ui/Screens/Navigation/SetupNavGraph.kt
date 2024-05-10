@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.gekata_mobile.ModelView.Realisation.ProjectsViewModel
 import com.example.gekata_mobile.ui.Screens.PathIndoorScreen.IndoorHomeScreen
+import com.example.gekata_mobile.ui.Screens.PathOutdoorScreen.OutdoorHomeScreen
 import com.example.gekata_mobile.ui.Screens.PathOutdoorScreen.OutdoorMainScreen
 import com.example.gekata_mobile.ui.Screens.PointsScreen.PointsHomeScreen
 import com.example.gekata_mobile.ui.Screens.ProjectsListScreen.ProjectsApp
@@ -22,7 +23,7 @@ fun SetupNavGraph(navController: NavHostController, projectsViewModel: ProjectsV
             IndoorHomeScreen(projectsViewModel = projectsViewModel, projectsUIStates = projectsViewModel.projectsUIStates)
         }
         composable(route = Screen.Outdoor.route) {
-            OutdoorMainScreen()
+            OutdoorHomeScreen(projectsViewModel = projectsViewModel)
         }
         composable(route = Screen.Points.route) {
             PointsHomeScreen(projectsViewModel = projectsViewModel, projectsUIStates = projectsViewModel.projectsUIStates)

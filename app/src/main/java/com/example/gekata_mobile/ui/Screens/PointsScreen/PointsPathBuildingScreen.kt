@@ -72,13 +72,10 @@ fun LoadingOverView(modifier: Modifier,
         val circles = remember { Animatable(initialValue = 0f) }
         LaunchedEffect(key1 = circles) {
 
-//                val test = newSingleThreadContext("Custom Thread")
             val deferred = async(Dispatchers.Default) {
                 operation()
             }
 
-
-//                val def = async {
             Log.d("effects", "animation ${Thread.currentThread().name}")
             circles.animateTo(
                 targetValue = 1f,

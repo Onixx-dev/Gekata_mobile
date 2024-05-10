@@ -22,6 +22,7 @@ import com.example.gekata_mobile.Models.Basic.WayPoint
 import com.example.gekata_mobile.Network.Repository.Realisation.ProjectsRepository
 import com.example.gekata_mobile.Network.TransportModels.TransportBuilding
 import com.example.gekata_mobile.TestApplication
+import com.yandex.mapkit.mapview.MapView
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
@@ -77,6 +78,10 @@ class ProjectsViewModel(
     var levelIndex: Int by mutableIntStateOf(0)
 
     var buildingIndex: Int = 0
+
+    ////////////////////////////////////////
+    //////// YANDEX MAP
+
 
 
     init {

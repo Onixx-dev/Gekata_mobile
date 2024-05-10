@@ -14,7 +14,7 @@ fun HomeScreen(
     modifier: Modifier
 ) {
     when (projectsUIStates) {
-        is ProjectsUIStates.Loading -> LoadingScreen(modifier)
+        is ProjectsUIStates.Loading -> LoadingScreen(modifier, "Loading")
         is ProjectsUIStates.Success -> ProjectsGridScreen(buildings = projectsUIStates.resultSearch, modifier = modifier)
         is ProjectsUIStates.Error -> ErrorScreen(retryAction = retryAction, modifier)
     }
