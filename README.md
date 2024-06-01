@@ -17,6 +17,10 @@ Project is distributed under the MIT license.
 
 - [Onixx13](https://github.com/Onixx-dev)
 
+## Стек
+
+Kotlin, Jetpack Compose, coroutines, ViewModel, NavGraph. Retrofit2 
+
 ## Лицензия
 
 Проект распространяется по лицензии MIT.
